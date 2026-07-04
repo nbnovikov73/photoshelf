@@ -8,13 +8,13 @@ LETSENCRYPT_EMAIL="${LETSENCRYPT_EMAIL:-$ADMIN_EMAIL}"
 REPO_URL="${REPO_URL:-}"
 
 if [ "$(id -u)" -ne 0 ]; then
-  echo "Run as root, for example: sudo -E bash scripts/vps-install.sh" >&2
+  echo "Run as root, for example: sudo env DOMAIN=... ADMIN_EMAIL=... bash scripts/vps-install.sh" >&2
   exit 1
 fi
 
 if [ -z "$DOMAIN" ] || [ -z "$ADMIN_EMAIL" ]; then
   echo "DOMAIN and ADMIN_EMAIL are required." >&2
-  echo "Example: sudo -E DOMAIN=photos.example.com ADMIN_EMAIL=me@example.com REPO_URL=https://github.com/nbnovikov73/photoshelf.git bash scripts/vps-install.sh" >&2
+  echo "Example: sudo env DOMAIN=photos.example.com ADMIN_EMAIL=me@example.com REPO_URL=https://github.com/nbnovikov73/photoshelf.git bash scripts/vps-install.sh" >&2
   exit 1
 fi
 
@@ -22,7 +22,9 @@ apt-get update
 apt-get install -y ca-certificates curl fail2ban git openssl ufw
 
 if ! command -v docker >/dev/null 2>&1; then
-  apt-get install -y docker.io docker-compose-plugin
+  # docker-compose-plugin exists in Docker's own apt repo; Ubuntu ships docker-compose-v2
+  apt-get install -y docker.io docker-compose-plugin \
+    || apt-get install -y docker.io docker-compose-v2
 fi
 
 systemctl enable --now docker
