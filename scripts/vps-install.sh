@@ -47,11 +47,13 @@ fi
 
 cd "$APP_DIR"
 
-POSTGRES_PASSWORD="$(openssl rand -base64 36 | tr -d '\n')"
-SESSION_SECRET="$(openssl rand -base64 48 | tr -d '\n')"
+# hex only: POSTGRES_PASSWORD is embedded in DATABASE_URL, where base64
+# characters like / + = break URL parsing
+POSTGRES_PASSWORD="$(openssl rand -hex 24)"
+SESSION_SECRET="$(openssl rand -hex 48)"
 MINIO_ROOT_USER="photoshelf$(openssl rand -hex 4)"
-MINIO_ROOT_PASSWORD="$(openssl rand -base64 36 | tr -d '\n')"
-ADMIN_INITIAL_PASSWORD="${ADMIN_INITIAL_PASSWORD:-$(openssl rand -base64 18 | tr -d '\n')}"
+MINIO_ROOT_PASSWORD="$(openssl rand -hex 24)"
+ADMIN_INITIAL_PASSWORD="${ADMIN_INITIAL_PASSWORD:-$(openssl rand -hex 12)}"
 
 if [ ! -f .env.production ]; then
   cat > .env.production <<EOF
