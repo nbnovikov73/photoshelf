@@ -51,7 +51,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     pathname.startsWith(prefix)
   );
 
-  if (mutationMethods.has(context.request.method) && !hasValidOrigin(context.request, context.url)) {
+  // the Android share sheet POSTs to /admin/share without a usable Origin;
+  // the route only redirects to the upload screen and the session check still applies
+  const isShareTarget = pathname === "/admin/share";
+
+  if (
+    !isShareTarget &&
+    mutationMethods.has(context.request.method) &&
+    !hasValidOrigin(context.request, context.url)
+  ) {
     return applySecurityHeaders(
       jsonError("INVALID_ORIGIN", "Request origin is not allowed.", 403)
     );

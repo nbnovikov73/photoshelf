@@ -1,0 +1,7 @@
+---
+// Share-target fallback: normally sw.js intercepts the POST from the Android
+// share sheet before it reaches the server. If the service worker is not
+// controlling yet, the shared file cannot be recovered here — just open the
+// upload screen.
+return Astro.redirect("/admin/photos/new", 303);
+---

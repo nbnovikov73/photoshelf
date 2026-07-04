@@ -50,13 +50,7 @@ export default function PhotoDraftComposer() {
     };
   }, [previewUrl]);
 
-  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.currentTarget.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
+  function applyFile(file: File) {
     if (!isSupportedImageMimeType(file.type)) {
       setMessage("Use JPEG, PNG, or WebP.");
       return;
@@ -67,19 +61,64 @@ export default function PhotoDraftComposer() {
       return;
     }
 
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
+    setPreviewUrl((current) => {
+      if (current) {
+        URL.revokeObjectURL(current);
+      }
 
-    setPreviewUrl(URL.createObjectURL(file));
+      return URL.createObjectURL(file);
+    });
     setSelectedFile(file);
     setFileName(file.name);
     setMessage("");
     setSavedPhoto(undefined);
+    setTitle((current) => current || file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "));
+  }
 
-    if (!title) {
-      setTitle(file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "));
+  // photo handed over by the Android share sheet (see share_target + sw.js)
+  useEffect(() => {
+    if (!new URLSearchParams(window.location.search).has("shared")) {
+      return;
     }
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const cache = await caches.open("photoshelf-share");
+        const stored = await cache.match("/shared-photo");
+
+        if (!stored || cancelled) {
+          return;
+        }
+
+        const blob = await stored.blob();
+        const storedName = stored.headers.get("X-File-Name");
+        const name = storedName ? decodeURIComponent(storedName) : "shared-photo.jpg";
+
+        await cache.delete("/shared-photo");
+
+        if (!cancelled) {
+          applyFile(new File([blob], name, { type: blob.type }));
+        }
+      } catch {
+        // no shared photo to pick up
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.currentTarget.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    applyFile(file);
   }
 
   async function readPhotoResponse(response: Response): Promise<PhotoSummary> {
