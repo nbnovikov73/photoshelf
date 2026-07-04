@@ -11,6 +11,9 @@ RUN npm ci
 
 COPY . .
 
+ARG DOMAIN=
+ENV DOMAIN=$DOMAIN
+
 RUN npm run db:generate
 RUN npm run build
 
