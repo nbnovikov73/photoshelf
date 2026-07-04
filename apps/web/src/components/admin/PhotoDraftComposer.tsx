@@ -133,7 +133,28 @@ export default function PhotoDraftComposer() {
   }
 
   // fetch() cannot report upload progress, so the upload goes through XHR
-  function uploadWithProgress(body: FormData): Promise<PhotoSummary> {
+  async function uploadWithProgress(body: FormData): Promise<PhotoSummary> {
+    const maxAttempts = 3;
+
+    for (let attempt = 1; ; attempt += 1) {
+      try {
+        return await uploadAttempt(body);
+      } catch (error) {
+        const isNetworkError = error instanceof Error && error.name === "UploadNetworkError";
+
+        if (!isNetworkError || attempt >= maxAttempts) {
+          throw error;
+        }
+
+        // mobile connections drop mid-upload (VPN flaps, Wi-Fi/LTE handover) — retry
+        setMessage(`Connection lost. Retrying (${attempt + 1}/${maxAttempts})...`);
+        setUploadProgress(0);
+        await new Promise((resolveDelay) => setTimeout(resolveDelay, 1500));
+      }
+    }
+  }
+
+  function uploadAttempt(body: FormData): Promise<PhotoSummary> {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 
@@ -163,7 +184,11 @@ export default function PhotoDraftComposer() {
         }
       };
 
-      xhr.onerror = () => reject(new Error("Network error. Check the connection and try again."));
+      xhr.onerror = () => {
+        const networkError = new Error("Network error. Check the connection and try again.");
+        networkError.name = "UploadNetworkError";
+        reject(networkError);
+      };
       xhr.send(body);
     });
   }
