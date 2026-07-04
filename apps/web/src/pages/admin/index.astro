@@ -1,0 +1,34 @@
+---
+import { PHOTO_STATUS } from "@photoshelf/shared";
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { listAdminPhotos } from "../../lib/photo-repository";
+
+const photos = await listAdminPhotos();
+const publishedCount = photos.filter((photo) => photo.status === PHOTO_STATUS.published).length;
+const draftCount = photos.filter((photo) => photo.status === PHOTO_STATUS.draft).length;
+---
+
+<AdminLayout title="Dashboard">
+  <a slot="action" class="button button--accent" href="/admin/photos/new">Upload photo</a>
+
+  <section class="admin-grid">
+    <div class="admin-panel admin-stat">
+      <strong>{publishedCount}</strong>
+      <p>Published photographs</p>
+    </div>
+    <div class="admin-panel admin-stat">
+      <strong>{draftCount}</strong>
+      <p>Draft photographs</p>
+    </div>
+  </section>
+
+  <section class="admin-panel">
+    <h2>Fast publish flow</h2>
+    <p>Upload, preview, edit only essential metadata, then publish.</p>
+    <div class="form-actions">
+      <a class="button button--accent" href="/admin/photos/new">Start upload</a>
+      <a class="button button--ghost" href="/admin/settings">Edit About</a>
+      <a class="button button--ghost" href="/photos">View public site</a>
+    </div>
+  </section>
+</AdminLayout>

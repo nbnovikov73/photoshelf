@@ -1,0 +1,35 @@
+---
+import { PHOTO_STATUS } from "@photoshelf/shared";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { listAdminPhotos } from "../../../lib/photo-repository";
+
+const photos = await listAdminPhotos();
+---
+
+<AdminLayout title="Photos">
+  <a slot="action" class="button button--accent" href="/admin/photos/new">Upload photo</a>
+
+  <section class="admin-panel">
+    <div class="admin-list">
+      {
+        photos.map((photo) => (
+          <article class="admin-list-item">
+            <div>
+              <h3>{photo.title}</h3>
+              <p>{photo.description}</p>
+            </div>
+            <span
+              class={
+                photo.status === PHOTO_STATUS.published
+                  ? "status-pill status-pill--published"
+                  : "status-pill"
+              }
+            >
+              {photo.status === PHOTO_STATUS.published ? "Published" : "Draft"}
+            </span>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</AdminLayout>

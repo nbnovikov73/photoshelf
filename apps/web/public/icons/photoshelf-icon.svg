@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PhotoShelf">
+  <rect width="512" height="512" rx="96" fill="#10100f"/>
+  <rect x="98" y="82" width="316" height="348" rx="10" fill="#f2f0ea"/>
+  <rect x="126" y="112" width="260" height="286" rx="4" fill="#171614"/>
+  <path d="M126 329 191 245 247 304 287 258 386 370v28H126z" fill="#e6e0d6"/>
+  <circle cx="318" cy="178" r="38" fill="#9f2436"/>
+  <rect x="160" y="430" width="192" height="18" rx="9" fill="#9f2436"/>
+</svg>

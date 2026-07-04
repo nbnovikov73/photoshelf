@@ -1,0 +1,15 @@
+---
+import SiteSettingsForm from "../../components/admin/SiteSettingsForm";
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { getSiteSettings } from "../../lib/settings-repository";
+
+const settings = await getSiteSettings();
+---
+
+<AdminLayout title="Settings" eyebrow="About">
+  <a slot="action" class="button button--ghost" href="/about">View About</a>
+
+  <section class="admin-panel">
+    <SiteSettingsForm client:load initialSettings={settings} />
+  </section>
+</AdminLayout>

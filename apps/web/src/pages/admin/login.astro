@@ -1,0 +1,42 @@
+---
+import "../../styles/global.css";
+
+const error = Astro.url.searchParams.get("error");
+const hasError = Boolean(error);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log in | PhotoShelf Admin</title>
+  </head>
+  <body class="login-page">
+    <main class="login-panel">
+      <p class="eyebrow">PhotoShelf Admin</p>
+      <h1>Log in</h1>
+      <form class="form-grid" method="post" action="/api/auth/login">
+        <label class="field">
+          <span>Email</span>
+          <input autocomplete="username" name="email" required type="email" />
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input autocomplete="current-password" name="password" required type="password" />
+        </label>
+        {
+          hasError && (
+            <p class="error-text">
+              {error === "rate"
+                ? "Too many login attempts. Wait a few minutes."
+                : "Email or password did not match."}
+            </p>
+          )
+        }
+        <button class="button button--accent" type="submit">Enter admin</button>
+      </form>
+    </main>
+  </body>
+</html>

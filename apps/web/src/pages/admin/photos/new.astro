@@ -1,0 +1,10 @@
+---
+import PhotoDraftComposer from "../../../components/admin/PhotoDraftComposer";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="New photo" eyebrow="Upload">
+  <section class="admin-panel">
+    <PhotoDraftComposer client:load />
+  </section>
+</AdminLayout>

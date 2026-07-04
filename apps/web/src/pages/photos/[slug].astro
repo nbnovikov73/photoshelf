@@ -1,0 +1,63 @@
+---
+import PublicLayout from "../../layouts/PublicLayout.astro";
+import { getPublishedPhotoBySlugFromDb } from "../../lib/photo-repository";
+
+const slug = Astro.params.slug;
+const photo = slug ? await getPublishedPhotoBySlugFromDb(slug) : undefined;
+
+if (!photo) {
+  return new Response("Photo not found", {
+    status: 404
+  });
+}
+
+const publishedAt = photo.publishedAt
+  ? new Intl.DateTimeFormat("en", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    }).format(new Date(photo.publishedAt))
+  : undefined;
+
+const exifRows = [
+  ["Camera", photo.exif?.camera],
+  ["Lens", photo.exif?.lens],
+  ["Aperture", photo.exif?.aperture],
+  ["Shutter", photo.exif?.shutterSpeed],
+  ["ISO", photo.exif?.iso],
+  ["Focal length", photo.exif?.focalLength]
+].filter(([, value]) => value);
+---
+
+<PublicLayout title={`${photo.title} | PhotoShelf`} description={photo.description}>
+  <article class="photo-page">
+    <div class="photo-page__image">
+      <img alt={photo.title} height={photo.height} src={photo.imageUrl} width={photo.width} />
+    </div>
+    <div class="photo-page__meta">
+      <p class="eyebrow">{photo.series?.title ?? "Photograph"}</p>
+      <h1>{photo.title}</h1>
+      {photo.description && <p class="lead">{photo.description}</p>}
+      {publishedAt && <p class="meta-line">Published {publishedAt}</p>}
+      {
+        photo.tags.length > 0 && (
+          <p class="meta-line">
+            {photo.tags.map((tag) => `#${tag}`).join(" ")}
+          </p>
+        )
+      }
+      {
+        exifRows.length > 0 && (
+          <dl class="metadata-list">
+            {exifRows.map(([label, value]) => (
+              <div>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+    </div>
+  </article>
+</PublicLayout>

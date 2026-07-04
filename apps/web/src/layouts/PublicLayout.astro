@@ -1,0 +1,49 @@
+---
+import SiteHeader from "../components/SiteHeader.astro";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  siteTitle?: string;
+}
+
+const {
+  title = "PhotoShelf",
+  description = "A personal shelf of selected photographs.",
+  siteTitle = "PhotoShelf"
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#10100f" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/icons/photoshelf-icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="public-shell">
+      <SiteHeader />
+      <main id="main">
+        <slot />
+      </main>
+      <footer class="site-footer">
+        <span>{siteTitle}</span>
+        <span>Own the archive. Publish with care.</span>
+      </footer>
+    </div>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+        });
+      }
+    </script>
+  </body>
+</html>

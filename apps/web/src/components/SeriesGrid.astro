@@ -1,0 +1,25 @@
+---
+import type { SeriesSummary } from "@photoshelf/shared";
+
+interface Props {
+  series: SeriesSummary[];
+}
+
+const { series } = Astro.props;
+---
+
+<div class="series-grid">
+  {
+    series.map((item) => (
+      <a class="series-tile" href={`/series/${item.slug}`}>
+        <span class="series-tile__cover">
+          {item.coverPhotoUrl && <img alt="" loading="lazy" src={item.coverPhotoUrl} />}
+        </span>
+        <span>
+          <h2>{item.title}</h2>
+          <p class="muted">{item.description}</p>
+        </span>
+      </a>
+    ))
+  }
+</div>

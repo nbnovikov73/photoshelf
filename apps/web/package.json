@@ -1,0 +1,33 @@
+{
+  "name": "@photoshelf/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0",
+    "build": "astro build",
+    "preview": "astro preview --host 0.0.0.0",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/node": "latest",
+    "@astrojs/react": "latest",
+    "@aws-sdk/client-s3": "latest",
+    "@prisma/client": "^6.0.0",
+    "@photoshelf/db": "file:../../packages/db",
+    "@photoshelf/shared": "file:../../packages/shared",
+    "astro": "latest",
+    "bcryptjs": "latest",
+    "exifr": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "sharp": "latest"
+  },
+  "devDependencies": {
+    "@astrojs/check": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "latest"
+  }
+}

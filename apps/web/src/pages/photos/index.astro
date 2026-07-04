@@ -1,0 +1,21 @@
+---
+import PhotoGrid from "../../components/PhotoGrid.astro";
+import PublicLayout from "../../layouts/PublicLayout.astro";
+import { listPublishedPhotos } from "../../lib/photo-repository";
+
+const photos = await listPublishedPhotos();
+---
+
+<PublicLayout title="Photos | PhotoShelf" description="Published PhotoShelf photographs.">
+  <section class="page-section">
+    <p class="eyebrow">Photos</p>
+    <h1 class="page-title">Selected photographs</h1>
+    <p class="lead">
+      Only published photographs appear here. Drafts stay private until the
+      photographer explicitly publishes them.
+    </p>
+  </section>
+  <section class="page-section page-section--tight">
+    <PhotoGrid photos={photos} />
+  </section>
+</PublicLayout>

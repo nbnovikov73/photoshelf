@@ -1,0 +1,9 @@
+.cache/
+.env
+.env.*
+.git/
+apps/web/dist/
+apps/web/node_modules/.vite/
+coverage/
+node_modules/
+npm-debug.log

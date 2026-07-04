@@ -1,0 +1,31 @@
+{
+  "name": "PhotoShelf Admin",
+  "short_name": "PhotoShelf",
+  "description": "Publish selected photographs to your own site from your phone.",
+  "start_url": "/admin",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#10100f",
+  "theme_color": "#10100f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/photoshelf-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Upload photo",
+      "short_name": "Upload",
+      "url": "/admin/photos/new"
+    },
+    {
+      "name": "Photos",
+      "short_name": "Photos",
+      "url": "/admin/photos"
+    }
+  ]
+}

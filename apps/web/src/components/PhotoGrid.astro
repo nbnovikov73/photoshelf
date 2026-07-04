@@ -1,0 +1,31 @@
+---
+import type { PhotoSummary } from "@photoshelf/shared";
+
+interface Props {
+  photos: PhotoSummary[];
+}
+
+const { photos } = Astro.props;
+---
+
+<div class="photo-grid">
+  {
+    photos.map((photo) => (
+      <a class="photo-tile" href={`/photos/${photo.slug}`}>
+        <span class="photo-tile__media">
+          <img
+            alt={photo.title}
+            height={photo.height}
+            loading="lazy"
+            src={photo.thumbnailUrl}
+            width={photo.width}
+          />
+        </span>
+        <span class="photo-tile__meta">
+          <strong>{photo.title}</strong>
+          <span>{photo.series?.title ?? photo.tags.slice(0, 2).join(", ")}</span>
+        </span>
+      </a>
+    ))
+  }
+</div>

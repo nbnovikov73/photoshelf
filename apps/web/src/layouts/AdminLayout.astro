@@ -1,0 +1,56 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  eyebrow?: string;
+}
+
+const { title, eyebrow = "Admin" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#10100f" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/icons/photoshelf-icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>{title} | PhotoShelf Admin</title>
+  </head>
+  <body class="admin-body">
+    <div class="admin-shell">
+      <header class="admin-header">
+        <a class="admin-brand" href="/admin">PhotoShelf</a>
+        <nav class="admin-nav" aria-label="Admin navigation">
+          <a href="/admin">Dashboard</a>
+          <a href="/admin/photos">Photos</a>
+          <a href="/admin/photos/new">Upload</a>
+          <a href="/admin/settings">Settings</a>
+          <form method="post" action="/api/auth/logout">
+            <button class="link-button" type="submit">Log out</button>
+          </form>
+        </nav>
+      </header>
+      <main class="admin-main">
+        <div class="admin-title-row">
+          <div>
+            <p class="eyebrow">{eyebrow}</p>
+            <h1>{title}</h1>
+          </div>
+          <slot name="action" />
+        </div>
+        <slot />
+      </main>
+    </div>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+        });
+      }
+    </script>
+  </body>
+</html>

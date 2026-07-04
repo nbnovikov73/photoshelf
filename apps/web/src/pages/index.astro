@@ -1,0 +1,60 @@
+---
+import PhotoGrid from "../components/PhotoGrid.astro";
+import SeriesGrid from "../components/SeriesGrid.astro";
+import PublicLayout from "../layouts/PublicLayout.astro";
+import {
+  siteSettings
+} from "../lib/sample-content";
+import {
+  listLatestPublishedPhotos,
+  listPublishedSeries
+} from "../lib/photo-repository";
+
+const latestPhotos = await listLatestPublishedPhotos(4);
+const heroPhoto = latestPhotos[0];
+const selectedSeries = await listPublishedSeries();
+---
+
+<PublicLayout
+  title={`${siteSettings.siteTitle} | Personal Photography`}
+  description={siteSettings.siteDescription}
+>
+  {
+    heroPhoto && (
+      <section class="home-hero">
+        <img alt={heroPhoto.title} height={heroPhoto.height} src={heroPhoto.imageUrl} width={heroPhoto.width} />
+        <div class="home-hero__content">
+          <p class="eyebrow">Latest photograph</p>
+          <h1>{siteSettings.siteTitle}</h1>
+          <p class="lead">
+            A personal photography shelf for selected frames: large, quiet, and
+            published without surrendering the archive.
+          </p>
+          <a class="button button--accent" href={`/photos/${heroPhoto.slug}`}>View {heroPhoto.title}</a>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="page-section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Recent</p>
+        <h2>Published photographs</h2>
+      </div>
+      <a class="text-link" href="/photos">All photos</a>
+    </div>
+    <PhotoGrid photos={latestPhotos} />
+  </section>
+
+  <section class="page-section page-section--tight">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Series</p>
+        <h2>Small bodies of work</h2>
+      </div>
+      <a class="text-link" href="/series">All series</a>
+    </div>
+    <SeriesGrid series={selectedSeries} />
+  </section>
+</PublicLayout>

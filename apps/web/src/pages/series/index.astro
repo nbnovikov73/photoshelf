@@ -1,0 +1,20 @@
+---
+import SeriesGrid from "../../components/SeriesGrid.astro";
+import PublicLayout from "../../layouts/PublicLayout.astro";
+import { listPublishedSeries } from "../../lib/photo-repository";
+
+const series = await listPublishedSeries();
+---
+
+<PublicLayout title="Series | PhotoShelf" description="PhotoShelf series index.">
+  <section class="page-section">
+    <p class="eyebrow">Series</p>
+    <h1 class="page-title">Bodies of work</h1>
+    <p class="lead">
+      Series collect published photographs into small, intentional sequences.
+    </p>
+  </section>
+  <section class="page-section page-section--tight">
+    <SeriesGrid series={series} />
+  </section>
+</PublicLayout>

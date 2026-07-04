@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  bio          String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Photo {
+  id             String      @id @default(cuid())
+  title          String
+  slug           String      @unique
+  description    String?
+  status         PhotoStatus @default(DRAFT)
+  originalUrl    String
+  imageUrl       String
+  thumbnailUrl   String
+  blurDataUrl    String?
+  width          Int?
+  height         Int?
+  aspectRatio    Float?
+  takenAt        DateTime?
+  publishedAt    DateTime?
+  camera         String?
+  lens           String?
+  aperture       String?
+  shutterSpeed   String?
+  iso            Int?
+  focalLength    String?
+  locationText   String?
+  seriesId       String?
+  series         Series?     @relation("SeriesPhotos", fields: [seriesId], references: [id], onDelete: SetNull)
+  coveredSeries  Series[]    @relation("SeriesCover")
+  tags           PhotoTag[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([seriesId])
+}
+
+model Series {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  description  String?
+  sortOrder    Int      @default(0)
+  coverPhotoId String?
+  coverPhoto   Photo?   @relation("SeriesCover", fields: [coverPhotoId], references: [id], onDelete: SetNull)
+  photos       Photo[]  @relation("SeriesPhotos")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  photos    PhotoTag[]
+  createdAt DateTime   @default(now())
+}
+
+model PhotoTag {
+  photoId String
+  tagId   String
+  photo   Photo @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  tag     Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([photoId, tagId])
+}
+
+model SiteSettings {
+  id              String   @id @default(cuid())
+  siteTitle       String
+  siteDescription String?
+  authorName      String?
+  authorBio       String?
+  contactEmail    String?
+  instagramUrl    String?
+  telegramUrl     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum PhotoStatus {
+  DRAFT
+  PUBLISHED
+}

@@ -1,0 +1,42 @@
+---
+import PublicLayout from "../layouts/PublicLayout.astro";
+import { getSiteSettings } from "../lib/settings-repository";
+
+const siteSettings = await getSiteSettings();
+const aboutTitle = siteSettings.authorName
+  ? `About ${siteSettings.authorName}`
+  : "A private tool for public photographs.";
+---
+
+<PublicLayout
+  title={`About | ${siteSettings.siteTitle}`}
+  description={siteSettings.authorBio ?? siteSettings.siteDescription}
+  siteTitle={siteSettings.siteTitle}
+>
+  <section class="page-section">
+    <p class="eyebrow">About</p>
+    <h1 class="page-title">{aboutTitle}</h1>
+    <div class="about-columns">
+      <p class="lead">
+        {
+          siteSettings.authorBio ??
+            "A quiet archive for selected photographs, edited with care and published without giving up ownership."
+        }
+      </p>
+      <div>
+        <p>
+          {siteSettings.siteDescription ?? "PhotoShelf is built around a deliberately short ritual: upload a frame, inspect the preview, add only the metadata that matters, and publish."}
+        </p>
+        {
+          (siteSettings.contactEmail || siteSettings.instagramUrl || siteSettings.telegramUrl) && (
+            <p class="muted">
+              {siteSettings.contactEmail && <a class="text-link" href={`mailto:${siteSettings.contactEmail}`}>Email</a>}
+              {siteSettings.instagramUrl && <> <a class="text-link" href={siteSettings.instagramUrl}>Instagram</a></>}
+              {siteSettings.telegramUrl && <> <a class="text-link" href={siteSettings.telegramUrl}>Telegram</a></>}
+            </p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</PublicLayout>

@@ -1,0 +1,30 @@
+---
+import PhotoGrid from "../../components/PhotoGrid.astro";
+import PublicLayout from "../../layouts/PublicLayout.astro";
+import {
+  getPublishedSeriesBySlugFromDb,
+  listPublishedPhotosBySeries
+} from "../../lib/photo-repository";
+
+const slug = Astro.params.slug;
+const series = slug ? await getPublishedSeriesBySlugFromDb(slug) : undefined;
+
+if (!series) {
+  return new Response("Series not found", {
+    status: 404
+  });
+}
+
+const photos = await listPublishedPhotosBySeries(series.slug);
+---
+
+<PublicLayout title={`${series.title} | PhotoShelf`} description={series.description}>
+  <section class="page-section">
+    <p class="eyebrow">Series</p>
+    <h1 class="page-title">{series.title}</h1>
+    {series.description && <p class="lead">{series.description}</p>}
+  </section>
+  <section class="page-section page-section--tight">
+    <PhotoGrid photos={photos} />
+  </section>
+</PublicLayout>
