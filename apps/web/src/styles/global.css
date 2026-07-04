@@ -476,6 +476,32 @@ h3 {
   padding-top: 0.75rem;
 }
 
+.admin-list-item--photo {
+  color: inherit;
+  grid-template-columns: auto 1fr auto;
+  text-decoration: none;
+}
+
+.admin-list-item--photo h3 {
+  margin: 0;
+}
+
+.admin-list-item--photo p {
+  color: var(--admin-muted);
+  margin: 0.15rem 0 0;
+}
+
+.admin-thumb {
+  border-radius: 6px;
+  height: 56px;
+  object-fit: cover;
+  width: 56px;
+}
+
+.upload-drop--static {
+  cursor: default;
+}
+
 .status-pill {
   border: 1px solid var(--admin-line);
   border-radius: 999px;

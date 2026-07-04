@@ -1,0 +1,20 @@
+---
+import PhotoEditor from "../../../components/admin/PhotoEditor";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { getAdminPhotoById } from "../../../lib/photo-repository";
+
+const photoId = Astro.params.id ?? "";
+const photo = photoId ? await getAdminPhotoById(photoId) : undefined;
+
+if (!photo) {
+  return Astro.redirect("/admin/photos");
+}
+---
+
+<AdminLayout title="Edit photo">
+  <a slot="action" class="button button--ghost" href="/admin/photos">Back to photos</a>
+
+  <section class="admin-panel">
+    <PhotoEditor client:load photo={photo} />
+  </section>
+</AdminLayout>

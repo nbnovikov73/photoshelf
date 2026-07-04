@@ -4,8 +4,7 @@ import {
   LARGE_IMAGE_MAX_WIDTH,
   THUMBNAIL_MAX_WIDTH,
   isSupportedImageMimeType,
-  isWithinUploadLimit,
-  normalizeSlug
+  isWithinUploadLimit
 } from "@photoshelf/shared";
 // exifr is CommonJS: a named import breaks in the ESM production build
 import exifr from "exifr";
@@ -210,8 +209,8 @@ export async function processPhotoUpload(formData: FormData): Promise<PhotoSumma
     tags: parseTags(String(formData.get("tags") ?? "")),
     title: String(formData.get("title") ?? "")
   };
-  const title = metadata.title?.trim() || fallbackTitleFromFileName(file.name);
-  const normalizedTitle = normalizeSlug(title) ? title : "Untitled photograph";
+  // keep the user's title as-is (any language); slug generation has its own fallback
+  const normalizedTitle = metadata.title?.trim() || fallbackTitleFromFileName(file.name);
 
   return createPhotoDraft({
     aperture: exif.aperture,

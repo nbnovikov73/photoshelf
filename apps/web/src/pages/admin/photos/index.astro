@@ -13,7 +13,13 @@ const photos = await listAdminPhotos();
     <div class="admin-list">
       {
         photos.map((photo) => (
-          <article class="admin-list-item">
+          <a class="admin-list-item admin-list-item--photo" href={`/admin/photos/${photo.id}`}>
+            <img
+              alt={photo.title}
+              class="admin-thumb"
+              loading="lazy"
+              src={photo.thumbnailUrl}
+            />
             <div>
               <h3>{photo.title}</h3>
               <p>{photo.description}</p>
@@ -27,9 +33,10 @@ const photos = await listAdminPhotos();
             >
               {photo.status === PHOTO_STATUS.published ? "Published" : "Draft"}
             </span>
-          </article>
+          </a>
         ))
       }
+      {photos.length === 0 && <p class="muted">No photographs yet. Upload the first one.</p>}
     </div>
   </section>
 </AdminLayout>
