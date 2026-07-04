@@ -136,6 +136,8 @@ button:disabled {
   height: 100%;
   inset: 0;
   object-fit: cover;
+  /* keep the upper part of the frame in view: faces live in the top third */
+  object-position: 50% 25%;
   opacity: 0.84;
   position: absolute;
   width: 100%;
@@ -522,6 +524,21 @@ h3 {
 
 .upload-drop--static {
   cursor: default;
+}
+
+.upload-progress {
+  background: var(--admin-line);
+  border-radius: 999px;
+  height: 0.4rem;
+  overflow: hidden;
+  width: 100%;
+}
+
+.upload-progress span {
+  background: var(--accent);
+  display: block;
+  height: 100%;
+  transition: width 0.2s ease;
 }
 
 .status-pill {

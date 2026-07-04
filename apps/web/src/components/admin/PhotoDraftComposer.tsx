@@ -32,6 +32,7 @@ export default function PhotoDraftComposer() {
   const [message, setMessage] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [savedPhoto, setSavedPhoto] = useState<PhotoSummary | undefined>();
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>();
 
   const tags = useMemo(
     () =>
@@ -131,6 +132,42 @@ export default function PhotoDraftComposer() {
     return payload.data.photo;
   }
 
+  // fetch() cannot report upload progress, so the upload goes through XHR
+  function uploadWithProgress(body: FormData): Promise<PhotoSummary> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.open("POST", "/api/photos/upload");
+      xhr.responseType = "json";
+
+      xhr.upload.onprogress = (event) => {
+        if (!event.lengthComputable) {
+          return;
+        }
+
+        const percent = Math.round((event.loaded / event.total) * 100);
+
+        setUploadProgress(percent);
+        setMessage(percent < 100 ? `Uploading... ${percent}%` : "Processing...");
+      };
+
+      xhr.onload = () => {
+        const payload = xhr.response as PhotoApiResponse | null;
+
+        if (payload?.ok) {
+          resolve(payload.data.photo);
+        } else {
+          reject(
+            new Error(payload && !payload.ok ? payload.error.message : "Could not upload photograph.")
+          );
+        }
+      };
+
+      xhr.onerror = () => reject(new Error("Network error. Check the connection and try again."));
+      xhr.send(body);
+    });
+  }
+
   async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -142,6 +179,7 @@ export default function PhotoDraftComposer() {
     setIsSubmitting(true);
     setMessage("Uploading...");
     setSavedPhoto(undefined);
+    setUploadProgress(0);
 
     try {
       const body = new FormData();
@@ -151,11 +189,7 @@ export default function PhotoDraftComposer() {
       body.set("seriesTitle", seriesTitle);
       body.set("tags", tagsInput);
 
-      const uploadResponse = await fetch("/api/photos/upload", {
-        body,
-        method: "POST"
-      });
-      const draftPhoto = await readPhotoResponse(uploadResponse);
+      const draftPhoto = await uploadWithProgress(body);
       const finalPhoto =
         status === PHOTO_STATUS.published
           ? await readPhotoResponse(
@@ -168,12 +202,13 @@ export default function PhotoDraftComposer() {
       setSavedPhoto(finalPhoto);
       setMessage(
         finalPhoto.status === PHOTO_STATUS.published
-          ? "Published."
-          : "Draft saved."
+          ? "Published. Opening photos..."
+          : "Draft saved. Opening photos..."
       );
+      window.location.assign("/admin/photos");
     } catch (error) {
+      setUploadProgress(undefined);
       setMessage(error instanceof Error ? error.message : "Could not save photograph.");
-    } finally {
       setIsSubmitting(false);
     }
   }
@@ -267,6 +302,11 @@ export default function PhotoDraftComposer() {
           {tags.length > 0 && <span className="muted">{tags.length} tags</span>}
         </div>
 
+        {uploadProgress !== undefined && (
+          <div aria-hidden="true" className="upload-progress">
+            <span style={{ width: `${uploadProgress}%` }} />
+          </div>
+        )}
         {message && <p className="muted">{message}</p>}
         {savedPhoto && (
           <div className="form-actions">
