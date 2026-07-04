@@ -1,8 +1,14 @@
 {
 	email {$LETSENCRYPT_EMAIL}
+	servers {
+		# QUIC uploads from mobile Chrome abort on large bodies; stick to h1/h2
+		protocols h1 h2
+	}
 }
 
 {$DOMAIN} {
+	log
+
 	encode zstd gzip
 
 	request_body {
