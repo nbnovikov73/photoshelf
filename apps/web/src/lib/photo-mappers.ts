@@ -31,6 +31,7 @@ export function mapPhoto(photo: PhotoWithRelations): PhotoSummary {
     height: photo.height ?? undefined,
     aspectRatio: photo.aspectRatio ?? undefined,
     publishedAt: photo.publishedAt?.toISOString(),
+    pinned: photo.pinnedAt !== null,
     series: photo.series ? mapSeries(photo.series) : undefined,
     tags: photo.tags.map((item) => item.tag.name),
     exif: {

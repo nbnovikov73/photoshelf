@@ -28,6 +28,7 @@ export interface PhotoSummary {
   height?: number;
   aspectRatio?: number;
   publishedAt?: string;
+  pinned: boolean;
   series?: SeriesSummary;
   tags: string[];
   exif?: ExifSummary;

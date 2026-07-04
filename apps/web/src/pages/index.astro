@@ -6,12 +6,13 @@ import {
   siteSettings
 } from "../lib/sample-content";
 import {
+  getHeroPhoto,
   listLatestPublishedPhotos,
   listPublishedSeries
 } from "../lib/photo-repository";
 
 const latestPhotos = await listLatestPublishedPhotos(4);
-const heroPhoto = latestPhotos[0];
+const heroPhoto = await getHeroPhoto();
 const selectedSeries = await listPublishedSeries();
 ---
 

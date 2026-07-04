@@ -39,6 +39,7 @@ export interface CreatePhotoDraftInput {
 
 export interface UpdatePhotoInput {
   description?: string;
+  pinned?: boolean;
   seriesTitle?: string;
   status?: PhotoStatus;
   tags?: string[];
@@ -164,6 +165,31 @@ export async function listPublishedPhotos(): Promise<PhotoSummary[]> {
 
 export async function listLatestPublishedPhotos(count: number): Promise<PhotoSummary[]> {
   return (await listPublishedPhotos()).slice(0, count);
+}
+
+export async function getHeroPhoto(): Promise<PhotoSummary | undefined> {
+  try {
+    const pinnedPhoto = await prisma.photo.findFirst({
+      include: photoInclude,
+      orderBy: {
+        pinnedAt: "desc"
+      },
+      where: {
+        pinnedAt: {
+          not: null
+        },
+        status: PHOTO_STATUS.published
+      }
+    });
+
+    if (pinnedPhoto) {
+      return mapPhoto(pinnedPhoto);
+    }
+  } catch {
+    // fall through to the latest published photo
+  }
+
+  return (await listLatestPublishedPhotos(1))[0];
 }
 
 export async function getPublishedPhotoBySlugFromDb(
@@ -314,9 +340,33 @@ export async function updatePhoto(
     status === PHOTO_STATUS.published
       ? existing.publishedAt ?? new Date()
       : null;
+  const pinnedAt =
+    input.pinned === undefined
+      ? existing.pinnedAt
+      : input.pinned
+        ? existing.pinnedAt ?? new Date()
+        : null;
+
+  if (input.pinned === true) {
+    // a single photo owns the hero: pinning one unpins the rest
+    await prisma.photo.updateMany({
+      data: {
+        pinnedAt: null
+      },
+      where: {
+        id: {
+          not: photoId
+        },
+        pinnedAt: {
+          not: null
+        }
+      }
+    });
+  }
 
   const updated = await prisma.photo.update({
     data: {
+      pinnedAt,
       description:
         input.description === undefined
           ? existing.description

@@ -24,14 +24,17 @@ const photos = await listAdminPhotos();
               <h3>{photo.title}</h3>
               <p>{photo.description}</p>
             </div>
-            <span
-              class={
-                photo.status === PHOTO_STATUS.published
-                  ? "status-pill status-pill--published"
-                  : "status-pill"
-              }
-            >
-              {photo.status === PHOTO_STATUS.published ? "Published" : "Draft"}
+            <span class="admin-list-pills">
+              <span
+                class={
+                  photo.status === PHOTO_STATUS.published
+                    ? "status-pill status-pill--published"
+                    : "status-pill"
+                }
+              >
+                {photo.status === PHOTO_STATUS.published ? "Published" : "Draft"}
+              </span>
+              {photo.pinned && <span class="status-pill status-pill--pinned">Hero</span>}
             </span>
           </a>
         ))

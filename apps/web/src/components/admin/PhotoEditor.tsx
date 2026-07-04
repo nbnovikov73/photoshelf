@@ -76,6 +76,34 @@ export default function PhotoEditor({ photo: initialPhoto }: Props) {
     }
   }
 
+  async function handlePinToggle() {
+    setIsSubmitting(true);
+    setMessage(photo.pinned ? "Unpinning..." : "Pinning...");
+
+    try {
+      const updated = await readPhotoResponse(
+        await fetch(`/api/photos/${photo.id}`, {
+          body: JSON.stringify({ pinned: !photo.pinned }),
+          headers: {
+            "Content-Type": "application/json"
+          },
+          method: "PATCH"
+        })
+      );
+
+      setPhoto(updated);
+      setMessage(
+        updated.pinned
+          ? "Pinned. This photograph now opens the home page."
+          : "Unpinned. The home page shows the latest photograph."
+      );
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not change the pin.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   async function handlePublishToggle() {
     setIsSubmitting(true);
     setMessage(isPublished ? "Unpublishing..." : "Publishing...");
@@ -113,6 +141,7 @@ export default function PhotoEditor({ photo: initialPhoto }: Props) {
             >
               {isPublished ? "Published" : "Draft"}
             </span>
+            {photo.pinned && <span className="status-pill status-pill--pinned">Hero</span>}
             {isPublished && (
               <a className="button button--ghost" href={`/photos/${photo.slug}`}>
                 View public page
@@ -173,6 +202,14 @@ export default function PhotoEditor({ photo: initialPhoto }: Props) {
             type="button"
           >
             {isPublished ? "Unpublish" : "Publish"}
+          </button>
+          <button
+            className="button button--ghost"
+            disabled={isSubmitting}
+            onClick={handlePinToggle}
+            type="button"
+          >
+            {photo.pinned ? "Unpin from hero" : "Pin to hero"}
           </button>
         </div>
 

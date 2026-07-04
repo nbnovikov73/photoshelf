@@ -571,6 +571,21 @@ h3 {
   background: #7fc98b;
 }
 
+.status-pill--pinned {
+  border-color: rgb(212 175 55 / 0.7);
+  color: #e8d48b;
+}
+
+.status-pill--pinned::before {
+  background: #d4af37;
+}
+
+.admin-list-pills {
+  display: grid;
+  gap: 0.35rem;
+  justify-items: end;
+}
+
 .login-page {
   align-items: center;
   background: var(--admin-bg);

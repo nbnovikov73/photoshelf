@@ -32,6 +32,7 @@ model Photo {
   aspectRatio    Float?
   takenAt        DateTime?
   publishedAt    DateTime?
+  pinnedAt       DateTime?
   camera         String?
   lens           String?
   aperture       String?

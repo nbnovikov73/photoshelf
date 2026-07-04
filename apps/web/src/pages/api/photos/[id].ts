@@ -59,6 +59,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
 
     const photo = await updatePhoto(id, {
       description: getString(body.description),
+      pinned: typeof body.pinned === "boolean" ? body.pinned : undefined,
       seriesTitle: getString(body.seriesTitle),
       status,
       tags: getTags(body.tags),
