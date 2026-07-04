@@ -7,7 +7,8 @@ import {
   isWithinUploadLimit,
   normalizeSlug
 } from "@photoshelf/shared";
-import { parse } from "exifr";
+// exifr is CommonJS: a named import breaks in the ESM production build
+import exifr from "exifr";
 import sharp from "sharp";
 import { getMaxUploadMb } from "./env";
 import { putObject } from "./storage";
@@ -94,7 +95,7 @@ function parseTags(tagsInput: string | undefined): string[] {
 
 async function extractExif(buffer: Buffer): Promise<ExifData> {
   try {
-    const raw = (await parse(buffer)) as unknown;
+    const raw = (await exifr.parse(buffer)) as unknown;
 
     if (!raw || typeof raw !== "object") {
       return {};
